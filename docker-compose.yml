@@ -1,0 +1,49 @@
+version: "3"
+services:
+  eureka-service:
+    image: eureka-service:latest
+    environment:
+        EUREKA_HOST: ${EUREKA_HOST}
+        EUREKA_PORT: ${EUREKA_PORT}
+        HTTP_PORT: 1111
+    restart: always
+    ports:
+     - "${EUREKA_PORT}:1111"
+ 
+  users-service:
+    image: users-service:latest
+    environment:
+        EUREKA_HOST: ${EUREKA_HOST}
+        EUREKA_PORT: ${EUREKA_PORT}
+        HTTP_PORT: 2221
+    restart: always
+    ports:
+     - "${USERS_SERVICE_PORT}:2221"
+    links:
+     - ${EUREKA_HOST}
+
+  locations-service:
+    image: locations-service:latest
+    environment:
+        EUREKA_HOST: ${EUREKA_HOST}
+        EUREKA_PORT: ${EUREKA_PORT}
+        HTTP_PORT: 3331
+    restart: always
+    ports:
+     - "${LOCATIONS_SERVICE_PORT}:3331"
+    links:
+     - ${EUREKA_HOST}
+
+  web-ui:
+    image: web-ui:latest
+    environment:
+        EUREKA_HOST: ${EUREKA_HOST}
+        EUREKA_PORT: ${EUREKA_PORT}
+        HTTP_PORT: 8881
+    restart: always
+    links:
+     - ${EUREKA_HOST}
+     - users-service
+     - locations-service
+    ports:
+     - "${WEB_UI_PORT}:8881"
